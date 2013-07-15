@@ -2472,6 +2472,15 @@ new System.Net.Security.RemoteCertificateValidationCallback((sender, certificate
             System.Diagnostics.Process.Start("https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=mich146%40hotmail%2ecom&lc=AU&item_name=Michael%20Oborne&no_note=0&currency_code=AUD&bn=PP%2dDonationsBF%3abtn_donate_SM%2egif%3aNonHostedGuest");
         }
 
+        public delegate void WMDeviceChangeEventHandler(WM_DEVICECHANGE_enum cause);
+        public event WMDeviceChangeEventHandler DeviceChanged;
+
+        protected virtual void DeviceChangeEvent(WM_DEVICECHANGE_enum trigger)
+        {
+            WMDeviceChangeEventHandler handler = DeviceChanged;
+            if (handler != null) handler(trigger);
+        }
+
         [StructLayout(LayoutKind.Sequential)]
         internal class DEV_BROADCAST_HDR
         {
@@ -2575,6 +2584,7 @@ new System.Net.Security.RemoteCertificateValidationCallback((sender, certificate
                          //Console.WriteLine("Added port {0}",port);
                      }
                      Console.WriteLine("Device Change {0} {1} {2}", m.Msg, (WM_DEVICECHANGE_enum)m.WParam, m.LParam);
+                     DeviceChangeEvent(n);
                     break;
                 default:
 

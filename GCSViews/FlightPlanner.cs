@@ -24,6 +24,7 @@ using SharpKml.Dom;
 using ArdupilotMega.Controls;
 using ArdupilotMega.Utilities;
 using ArdupilotMega.Controls.BackstageView;
+using ArdupilotMega.Devices;
 using ProjNet.CoordinateSystems.Transformations;
 using ProjNet.CoordinateSystems;
 using ProjNet.Converters;
@@ -552,6 +553,8 @@ namespace ArdupilotMega.GCSViews
             writeKML();
 
             panelWaypoints.Expand = false;
+
+            handleGPSDeviceChange();
 
             timer1.Start();
         }
@@ -4423,6 +4426,75 @@ namespace ArdupilotMega.GCSViews
             double area = calcpolygonarea(drawnpolygon.Points);
 
             CustomMessageBox.Show("Area: " + area + " m2");
+        }
+
+        private void setHereToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            MainV2.comPort.MAV.cs.TrackerLocation = new PointLatLngAlt(end) { Alt = MainV2.comPort.MAV.cs.HomeAlt };
+            updateTrackerText();
+        }
+
+        private void gPSCaptureToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            GetTrackerHomeFromGPS();
+            updateTrackerText();
+        }
+
+        private void handleGPSDeviceChange(MainV2.WM_DEVICECHANGE_enum cause)
+        {
+            // this can be changed if more specific handling is wanted
+            handleGPSDeviceChange();
+        }
+
+        private void handleGPSDeviceChange()
+        {
+            bool gpsModuleAvail = (checkforGPSModule() != null);
+            lblTrkrHome.Enabled = gpsModuleAvail;
+            gPSCaptureToolStripMenuItem.Enabled = gpsModuleAvail;
+        }
+
+        private GPSDevice checkforGPSModule()
+        {
+            MainV2.instance.DeviceChanged += handleGPSDeviceChange;
+            GPSDevice gsGPSmodule;
+            if (GarminUSBGPS.DevicePresent())
+            {
+                gsGPSmodule = new GarminUSBGPS();
+                return gsGPSmodule;
+            }
+            else return null;
+        }
+
+        private void updateTrackerText()
+        {
+            PointLatLngAlt pos = MainV2.comPort.MAV.cs.TrackerLocation;
+
+            TXT_trkrlat.Text = pos.Lat.ToString();
+            TXT_trkrlng.Text = pos.Lng.ToString();
+            TXT_trkralt.Text = pos.Alt.ToString();
+        }
+
+        public void GetTrackerHomeFromGPS()
+        {
+            GPSDevice gsGPSmodule = checkforGPSModule();
+
+            if (gsGPSmodule != null)
+            {
+                GPSPosition pos = gsGPSmodule.GetCoordinates();
+                double alt = getGEAlt(pos.Lat, pos.Lng);
+                MainV2.comPort.MAV.cs.TrackerLocation = new PointLatLngAlt(pos.Lat, pos.Lng, alt, "Tracker Home");
+            }
+            else
+            {
+                CustomMessageBox.Show("No GPS device connected. Please verify it is connected and try again.");
+                handleGPSDeviceChange();
+            }
+        }
+
+        private void lblTrkrHome_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            GetTrackerHomeFromGPS();
+            updateTrackerText();
         }
     }
 }
