@@ -88,6 +88,14 @@
             this.splitter1 = new BSE.Windows.Forms.Splitter();
             this.BUT_Add = new ArdupilotMega.Controls.MyButton();
             this.panelAction = new BSE.Windows.Forms.Panel();
+            this.panel3 = new System.Windows.Forms.Panel();
+            this.lblTrkrHome = new System.Windows.Forms.LinkLabel();
+            this.label12 = new System.Windows.Forms.Label();
+            this.label13 = new System.Windows.Forms.Label();
+            this.label14 = new System.Windows.Forms.Label();
+            this.TXT_trkralt = new System.Windows.Forms.TextBox();
+            this.TXT_trkrlng = new System.Windows.Forms.TextBox();
+            this.TXT_trkrlat = new System.Windows.Forms.TextBox();
             this.comboBoxMapType = new System.Windows.Forms.ComboBox();
             this.panelMap = new System.Windows.Forms.Panel();
             this.lbl_distance = new System.Windows.Forms.Label();
@@ -141,6 +149,8 @@
             this.loadAndAppendToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveWPFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.trackerHomeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.setHereToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.gPSCaptureToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.flyToHereToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.trackBar1 = new ArdupilotMega.Controls.MyTrackBar();
             this.label11 = new System.Windows.Forms.Label();
@@ -153,6 +163,7 @@
             this.panel2.SuspendLayout();
             this.panelWaypoints.SuspendLayout();
             this.panelAction.SuspendLayout();
+            this.panel3.SuspendLayout();
             this.panelMap.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
@@ -575,6 +586,7 @@
             this.panelAction.CaptionFont = new System.Drawing.Font("Segoe UI", 11.75F, System.Drawing.FontStyle.Bold);
             this.panelAction.CaptionHeight = 21;
             this.panelAction.ColorScheme = BSE.Windows.Forms.ColorScheme.Custom;
+            this.panelAction.Controls.Add(this.panel3);
             this.panelAction.Controls.Add(this.panel5);
             this.panelAction.Controls.Add(this.panel1);
             this.panelAction.Controls.Add(this.panel2);
@@ -601,6 +613,55 @@
             this.panelAction.ToolTipTextCloseIcon = null;
             this.panelAction.ToolTipTextExpandIconPanelCollapsed = null;
             this.panelAction.ToolTipTextExpandIconPanelExpanded = null;
+            // 
+            // panel3
+            // 
+            resources.ApplyResources(this.panel3, "panel3");
+            this.panel3.Controls.Add(this.lblTrkrHome);
+            this.panel3.Controls.Add(this.label12);
+            this.panel3.Controls.Add(this.label13);
+            this.panel3.Controls.Add(this.label14);
+            this.panel3.Controls.Add(this.TXT_trkralt);
+            this.panel3.Controls.Add(this.TXT_trkrlng);
+            this.panel3.Controls.Add(this.TXT_trkrlat);
+            this.panel3.Name = "panel3";
+            // 
+            // lblTrkrHome
+            // 
+            resources.ApplyResources(this.lblTrkrHome, "lblTrkrHome");
+            this.lblTrkrHome.Name = "lblTrkrHome";
+            this.lblTrkrHome.TabStop = true;
+            this.lblTrkrHome.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lblTrkrHome_LinkClicked);
+            // 
+            // label12
+            // 
+            resources.ApplyResources(this.label12, "label12");
+            this.label12.Name = "label12";
+            // 
+            // label13
+            // 
+            resources.ApplyResources(this.label13, "label13");
+            this.label13.Name = "label13";
+            // 
+            // label14
+            // 
+            resources.ApplyResources(this.label14, "label14");
+            this.label14.Name = "label14";
+            // 
+            // TXT_trkralt
+            // 
+            resources.ApplyResources(this.TXT_trkralt, "TXT_trkralt");
+            this.TXT_trkralt.Name = "TXT_trkralt";
+            // 
+            // TXT_trkrlng
+            // 
+            resources.ApplyResources(this.TXT_trkrlng, "TXT_trkrlng");
+            this.TXT_trkrlng.Name = "TXT_trkrlng";
+            // 
+            // TXT_trkrlat
+            // 
+            resources.ApplyResources(this.TXT_trkrlat, "TXT_trkrlat");
+            this.TXT_trkrlat.Name = "TXT_trkrlat";
             // 
             // comboBoxMapType
             // 
@@ -984,9 +1045,24 @@
             // 
             // trackerHomeToolStripMenuItem
             // 
+            this.trackerHomeToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.setHereToolStripMenuItem,
+            this.gPSCaptureToolStripMenuItem});
             this.trackerHomeToolStripMenuItem.Name = "trackerHomeToolStripMenuItem";
             resources.ApplyResources(this.trackerHomeToolStripMenuItem, "trackerHomeToolStripMenuItem");
             this.trackerHomeToolStripMenuItem.Click += new System.EventHandler(this.trackerHomeToolStripMenuItem_Click);
+            // 
+            // setHereToolStripMenuItem
+            // 
+            this.setHereToolStripMenuItem.Name = "setHereToolStripMenuItem";
+            resources.ApplyResources(this.setHereToolStripMenuItem, "setHereToolStripMenuItem");
+            this.setHereToolStripMenuItem.Click += new System.EventHandler(this.setHereToolStripMenuItem_Click);
+            // 
+            // gPSCaptureToolStripMenuItem
+            // 
+            this.gPSCaptureToolStripMenuItem.Name = "gPSCaptureToolStripMenuItem";
+            resources.ApplyResources(this.gPSCaptureToolStripMenuItem, "gPSCaptureToolStripMenuItem");
+            this.gPSCaptureToolStripMenuItem.Click += new System.EventHandler(this.gPSCaptureToolStripMenuItem_Click);
             // 
             // flyToHereToolStripMenuItem
             // 
@@ -1046,6 +1122,8 @@
             this.panelWaypoints.PerformLayout();
             this.panelAction.ResumeLayout(false);
             this.panelAction.PerformLayout();
+            this.panel3.ResumeLayout(false);
+            this.panel3.PerformLayout();
             this.panelMap.ResumeLayout(false);
             this.panelMap.PerformLayout();
             this.contextMenuStrip1.ResumeLayout(false);
@@ -1164,6 +1242,16 @@
         private System.Windows.Forms.DataGridViewImageColumn Up;
         private System.Windows.Forms.DataGridViewImageColumn Down;
         private System.Windows.Forms.DataGridViewTextBoxColumn Grad;
+        private System.Windows.Forms.Panel panel3;
         public System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
+        private System.Windows.Forms.LinkLabel lblTrkrHome;
+        private System.Windows.Forms.Label label12;
+        private System.Windows.Forms.Label label13;
+        private System.Windows.Forms.Label label14;
+        private System.Windows.Forms.TextBox TXT_trkralt;
+        private System.Windows.Forms.TextBox TXT_trkrlng;
+        private System.Windows.Forms.TextBox TXT_trkrlat;
+        private System.Windows.Forms.ToolStripMenuItem setHereToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem gPSCaptureToolStripMenuItem;
     }
 }

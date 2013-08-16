@@ -1,4 +1,4 @@
 MissionPlanner
 ==============
 
-APM Mission Planner
+CyDrone's ArdupilotMega Mission Planner Flavor
