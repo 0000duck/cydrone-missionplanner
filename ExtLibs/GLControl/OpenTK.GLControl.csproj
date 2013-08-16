@@ -106,9 +106,8 @@
     <AssemblyOriginatorKeyFile>sn.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="OpenTK, Version=1.0.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\Documents\Visual Studio 2010\Projects\ArdupilotMega\ArdupilotMega\bin\Debug\OpenTK.dll</HintPath>
+    <Reference Include="OpenTK">
+      <HintPath>..\..\Lib\OpenTK.dll</HintPath>
     </Reference>
     <Reference Include="System">
       <Name>System</Name>

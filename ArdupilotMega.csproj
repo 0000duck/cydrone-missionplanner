@@ -379,7 +379,6 @@
     <Compile Include="Utilities\BigInteger.cs" />
     <Compile Include="Utilities\CleanDrivers.cs" />
     <Compile Include="Utilities\Firmware.cs" />
-    <Compile Include="Utilities\RSA.cs" />
     <Compile Include="Utilities\StringRedirectWriter.cs" />
     <Compile Include="Utilities\Tracking.cs" />
     <Compile Include="Utilities\Vario.cs" />
