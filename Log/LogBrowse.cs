@@ -11,6 +11,7 @@ using log4net;
 using ZedGraph; // Graphs
 using System.Xml;
 using System.Collections;
+using MissionPlanner.Controls;
 
 namespace ArdupilotMega.Log
 {
@@ -26,6 +27,13 @@ namespace ArdupilotMega.Log
         PointPairList list3 = new PointPairList();
         PointPairList list4 = new PointPairList();
         PointPairList list5 = new PointPairList();
+        PointPairList list6 = new PointPairList();
+        PointPairList list7 = new PointPairList();
+        PointPairList list8 = new PointPairList();
+        PointPairList list9 = new PointPairList();
+        PointPairList list10 = new PointPairList();
+
+        PointPairList[] listdata;
 
         int graphs = 0;
 
@@ -65,7 +73,7 @@ namespace ArdupilotMega.Log
             if (keyData == (Keys.Control |Keys.G))
             {
                 string lineno = "0";
-                Common.InputBox("Line no", "Enter Line Number", ref lineno);
+                InputBox.Show("Line no", "Enter Line Number", ref lineno);
 
                 int line = int.Parse(lineno);
 
@@ -83,6 +91,8 @@ namespace ArdupilotMega.Log
 
         public LogBrowse()
         {
+            listdata = new PointPairList[] { list1, list2, list3, list4, list5, list6, list7, list8, list9, list10 };
+
             InitializeComponent();
         }
 
@@ -344,6 +354,11 @@ namespace ArdupilotMega.Log
             myCurve = myPane.AddCurve("Value", list3, Color.Blue, SymbolType.None);
             myCurve = myPane.AddCurve("Value", list4, Color.Pink, SymbolType.None);
             myCurve = myPane.AddCurve("Value", list5, Color.Yellow, SymbolType.None);
+            myCurve = myPane.AddCurve("Value", list6, Color.Orange, SymbolType.None);
+            myCurve = myPane.AddCurve("Value", list7, Color.Violet, SymbolType.None);
+            myCurve = myPane.AddCurve("Value", list8, Color.Wheat, SymbolType.None);
+            myCurve = myPane.AddCurve("Value", list9, Color.Teal, SymbolType.None);
+            myCurve = myPane.AddCurve("Value", list10, Color.Silver, SymbolType.None);
 
             // Show the x axis grid
             myPane.XAxis.MajorGrid.IsVisible = true;
@@ -388,6 +403,12 @@ namespace ArdupilotMega.Log
                 return;
             }
 
+            if (dataGridView1.CurrentCell == null)
+            {
+                CustomMessageBox.Show("Please select a cell first");
+                return;
+            }
+                
             int col = dataGridView1.CurrentCell.ColumnIndex;
             int row = dataGridView1.CurrentCell.RowIndex;
             string type = dataGridView1[1, row].Value.ToString();
@@ -407,42 +428,19 @@ namespace ArdupilotMega.Log
                 {
                     try
                     {
-                        double value = double.Parse(datarow.Cells[col].Value.ToString(), new System.Globalization.CultureInfo("en-US"));
-                        if (graphs == 0)
+                        if (graphs >= listdata.Length)
                         {
-                            zg1.GraphPane.CurveList[0].Label.Text = dataGridView1.Columns[col].HeaderText;
-                            list1.Add(a, value);
-                            leftorrightaxis(sender,zg1.GraphPane.CurveList[0]);
-                        }
-                        else if (graphs == 1)
-                        {
-                            zg1.GraphPane.CurveList[1].Label.Text = dataGridView1.Columns[col].HeaderText;
-                            list2.Add(a, value);
-                            leftorrightaxis(sender,zg1.GraphPane.CurveList[1]);
-                        }
-                        else if (graphs == 2)
-                        {
-                            zg1.GraphPane.CurveList[2].Label.Text = dataGridView1.Columns[col].HeaderText;
-                            list3.Add(a, value);
-                            leftorrightaxis(sender,zg1.GraphPane.CurveList[2]);
-                        }
-                        else if (graphs == 3)
-                        {
-                            zg1.GraphPane.CurveList[3].Label.Text = dataGridView1.Columns[col].HeaderText;
-                            list4.Add(a, value);
-                            leftorrightaxis(sender,zg1.GraphPane.CurveList[3]);
-                        }
-                        else if (graphs == 4)
-                        {
-                            zg1.GraphPane.CurveList[4].Label.Text = dataGridView1.Columns[col].HeaderText;
-                            list5.Add(a, value);
-                            leftorrightaxis(sender,zg1.GraphPane.CurveList[4]);
-                        }
-                        else
-                        {
-                            CustomMessageBox.Show("Max of 5");
+                            CustomMessageBox.Show("Max of 10");
                             break;
                         }
+
+                        double value = double.Parse(datarow.Cells[col].Value.ToString(), new System.Globalization.CultureInfo("en-US"));
+
+                            zg1.GraphPane.CurveList[graphs].Label.Text = dataGridView1.Columns[col].HeaderText;
+                            listdata[graphs].Add(a, value);
+                            leftorrightaxis(sender, zg1.GraphPane.CurveList[graphs]);
+                      
+             
                     }
                     catch { error++; log.Info("Bad Data : " + type + " " + col + " " + a); if (error >= 500) { CustomMessageBox.Show("There is to much bad data - failing"); break; } }
                 }
@@ -583,6 +581,11 @@ namespace ArdupilotMega.Log
         private void BUT_Graphit_R_Click(object sender, EventArgs e)
         {
             Graphit_Click(sender,e);
+        }
+
+        private void zg1_Paint(object sender, PaintEventArgs e)
+        {
+
         }
     }
 }

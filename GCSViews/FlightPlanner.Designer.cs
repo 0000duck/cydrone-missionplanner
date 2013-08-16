@@ -134,6 +134,7 @@
             this.createWpCircleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.gridToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.gridV2ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.cameraGridToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.areaToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mapToolToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ContextMeasure = new System.Windows.Forms.ToolStripMenuItem();
@@ -142,7 +143,6 @@
             this.prefetchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.kMLOverlayToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.elevationGraphToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.cameraToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.reverseWPsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.fileLoadSaveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.loadWPFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -303,7 +303,7 @@
             // 
             this.Up.DefaultCellStyle = dataGridViewCellStyle3;
             resources.ApplyResources(this.Up, "Up");
-            this.Up.Image = global::ArdupilotMega.Properties.Resources.up;
+            this.Up.Image = global::MissionPlanner.Properties.Resources.up;
             this.Up.ImageLayout = System.Windows.Forms.DataGridViewImageCellLayout.Stretch;
             this.Up.Name = "Up";
             // 
@@ -312,7 +312,7 @@
             dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
             this.Down.DefaultCellStyle = dataGridViewCellStyle4;
             resources.ApplyResources(this.Down, "Down");
-            this.Down.Image = global::ArdupilotMega.Properties.Resources.down;
+            this.Down.Image = global::MissionPlanner.Properties.Resources.down;
             this.Down.ImageLayout = System.Windows.Forms.DataGridViewImageCellLayout.Stretch;
             this.Down.Name = "Down";
             // 
@@ -450,7 +450,7 @@
             dataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
             this.dataGridViewImageColumn1.DefaultCellStyle = dataGridViewCellStyle7;
             resources.ApplyResources(this.dataGridViewImageColumn1, "dataGridViewImageColumn1");
-            this.dataGridViewImageColumn1.Image = global::ArdupilotMega.Properties.Resources.up;
+            this.dataGridViewImageColumn1.Image = global::MissionPlanner.Properties.Resources.up;
             this.dataGridViewImageColumn1.ImageLayout = System.Windows.Forms.DataGridViewImageCellLayout.Stretch;
             this.dataGridViewImageColumn1.Name = "dataGridViewImageColumn1";
             // 
@@ -459,7 +459,7 @@
             dataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
             this.dataGridViewImageColumn2.DefaultCellStyle = dataGridViewCellStyle8;
             resources.ApplyResources(this.dataGridViewImageColumn2, "dataGridViewImageColumn2");
-            this.dataGridViewImageColumn2.Image = global::ArdupilotMega.Properties.Resources.down;
+            this.dataGridViewImageColumn2.Image = global::MissionPlanner.Properties.Resources.down;
             this.dataGridViewImageColumn2.ImageLayout = System.Windows.Forms.DataGridViewImageCellLayout.Stretch;
             this.dataGridViewImageColumn2.Name = "dataGridViewImageColumn2";
             // 
@@ -926,6 +926,7 @@
             this.createWpCircleToolStripMenuItem,
             this.gridToolStripMenuItem,
             this.gridV2ToolStripMenuItem,
+            this.cameraGridToolStripMenuItem,
             this.areaToolStripMenuItem});
             this.autoWPToolStripMenuItem.Name = "autoWPToolStripMenuItem";
             resources.ApplyResources(this.autoWPToolStripMenuItem, "autoWPToolStripMenuItem");
@@ -948,6 +949,12 @@
             resources.ApplyResources(this.gridV2ToolStripMenuItem, "gridV2ToolStripMenuItem");
             this.gridV2ToolStripMenuItem.Click += new System.EventHandler(this.gridV2ToolStripMenuItem_Click);
             // 
+            // cameraGridToolStripMenuItem
+            // 
+            this.cameraGridToolStripMenuItem.Name = "cameraGridToolStripMenuItem";
+            resources.ApplyResources(this.cameraGridToolStripMenuItem, "cameraGridToolStripMenuItem");
+            this.cameraGridToolStripMenuItem.Click += new System.EventHandler(this.cameraGridToolStripMenuItem_Click);
+            // 
             // areaToolStripMenuItem
             // 
             this.areaToolStripMenuItem.Name = "areaToolStripMenuItem";
@@ -963,7 +970,6 @@
             this.prefetchToolStripMenuItem,
             this.kMLOverlayToolStripMenuItem,
             this.elevationGraphToolStripMenuItem,
-            this.cameraToolStripMenuItem,
             this.reverseWPsToolStripMenuItem});
             this.mapToolToolStripMenuItem.Name = "mapToolToolStripMenuItem";
             resources.ApplyResources(this.mapToolToolStripMenuItem, "mapToolToolStripMenuItem");
@@ -1003,12 +1009,6 @@
             this.elevationGraphToolStripMenuItem.Name = "elevationGraphToolStripMenuItem";
             resources.ApplyResources(this.elevationGraphToolStripMenuItem, "elevationGraphToolStripMenuItem");
             this.elevationGraphToolStripMenuItem.Click += new System.EventHandler(this.elevationGraphToolStripMenuItem_Click);
-            // 
-            // cameraToolStripMenuItem
-            // 
-            this.cameraToolStripMenuItem.Name = "cameraToolStripMenuItem";
-            resources.ApplyResources(this.cameraToolStripMenuItem, "cameraToolStripMenuItem");
-            this.cameraToolStripMenuItem.Click += new System.EventHandler(this.cameraToolStripMenuItem_Click);
             // 
             // reverseWPsToolStripMenuItem
             // 
@@ -1180,7 +1180,6 @@
         private BSE.Windows.Forms.Splitter splitter1;
         private System.Windows.Forms.Panel panelBASE;
         private System.Windows.Forms.Label lbl_homedist;
-        private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.ToolTip toolTip1;
         private System.Windows.Forms.ToolStripMenuItem clearMissionToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem polygonToolStripMenuItem;
@@ -1215,7 +1214,6 @@
         private System.Windows.Forms.ToolStripMenuItem prefetchToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem kMLOverlayToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem elevationGraphToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem cameraToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem rTLToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem landToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem takeoffToolStripMenuItem;
@@ -1226,6 +1224,7 @@
         private System.Windows.Forms.ToolStripMenuItem trackerHomeToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem flyToHereToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem gridV2ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem cameraGridToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem reverseWPsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem loadAndAppendToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem savePolygonToolStripMenuItem;
@@ -1244,6 +1243,7 @@
         private System.Windows.Forms.DataGridViewImageColumn Down;
         private System.Windows.Forms.DataGridViewTextBoxColumn Grad;
         private System.Windows.Forms.Panel panel3;
+        public System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.LinkLabel lblTrkrHome;
         private System.Windows.Forms.Label label12;
         private System.Windows.Forms.Label label13;

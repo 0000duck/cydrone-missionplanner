@@ -1,4 +1,75 @@
-﻿* Mission Planner 1.2.61
+﻿* Mission Planner 1.2.69
+add png support to direct image injection
+add analytics
+fix plane accel calib
+fix help screen
+
+* Mission Planner 1.2.68
+add vario support.
+add better wms support, as per kogan's mod
+add camera planner - bbasso
+add more plugin interfaces
+add change log to help screen
+add change log to update dialog
+add firmware screen when connected.
+add old accel calib to plane config.
+migrate fw screen to new fw class
+add support for more graphs, 5 to 10
+add custommessagebox link support
+
+* Mission Planner 1.2.67
+fix georegimage bug
+wizard fixs
+new plugintest project
+fix binary log , vs .
+fix kml overlay
+wiki link on fs page
+
+* Mission Planner 1.2.66
+relocate serial/tcp/udp comms to external dll
+try fix serialstream.disposed error
+more plugin system mods
+fix tlog kml generation
+more wizard wip
+new drivers
+fix core mavlink getparam index
+fix logbrowse exception
+fix tlog kmls, always alt asl
+change firmware screen images
+change autoscalemode on custommessagebox (125% fonts)
+add excveption handleing to mavlinkcombobox
+
+* Mission Planner 1.2.65
+custom firmware load fix
+refresh on disconnect
+px4fmu updates
+px4uploader update
+add H, Y6, tri, Heli to frame setup
+
+* Mission Planner 1.2.64
+rename hardware and software config
+change fw screen loading
+wizard wip
+
+* Mission Planner 1.2.63
+relocate controls to external dll
+change mp icon
+add backup metadatafile
+fix altmsl unit scaling
+more wizard wip
+fix gpx time
+fix AP accel
+added ctl + left click = guided mode wp
+move heli screen to software tab
+rename adv param list to full param list
+
+* Mission Planner 1.2.62
+fix hud
+revert fw history
+mod plane accell calib
+fix log playback speed
+
+* Mission Planner 1.2.61
 Wizard WIP
 relocate native methods
 add support for russian hud. - no option to change this yet.

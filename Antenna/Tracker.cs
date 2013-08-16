@@ -6,8 +6,8 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using ArdupilotMega.Controls.BackstageView;
-using ArdupilotMega.Comms;
+using ArdupilotMega.Controls;
+using MissionPlanner.Comms;
 using ArdupilotMega.Utilities;
 
 namespace ArdupilotMega.Antenna

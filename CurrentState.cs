@@ -64,7 +64,8 @@ namespace ArdupilotMega
         }
         DateTime lastalt = DateTime.MinValue;
         [DisplayText("Altitude (dist)")]
-        public float altasl { get; set; }
+        public float altasl { get { return _altasl * multiplierdist; } set { _altasl = value; } }
+        float _altasl = 0;
         float oldalt = 0;
         [DisplayText("Alt Home Offset (dist)")]
         public float altoffsethome { get; set; }
@@ -612,8 +613,7 @@ enum gcs_severity {
                         if (fence.breach_status != (byte)MAVLink.FENCE_BREACH.NONE)
                         {
                             // fence breached
-
-
+                            messageHigh = "Fence Breach";
                         }
 
                         mavinterface.MAV.packets[MAVLink.MAVLINK_MSG_ID_FENCE_STATUS] = null;
@@ -686,7 +686,7 @@ enum gcs_severity {
                             // prevent running thsi unless we have to
                             if (_mode != hb.custom_mode)
                             {
-                                List<KeyValuePair<int, string>> modelist = Common.getModesList();
+                                List<KeyValuePair<int, string>> modelist = Common.getModesList(this);
 
                                 bool found = false;
 
@@ -997,9 +997,9 @@ enum gcs_severity {
                         bs.ResetBindings(false);
                         //bs.ResetCurrentItem();
                         // mono workaround - this is alot faster
-                       // bs.Clear();
+                        //bs.Clear();
                         //bs.Add(this);
-                       // Console.WriteLine(" " + DateTime.Now.Millisecond + " done ");
+                      //  Console.WriteLine(" " + DateTime.Now.Millisecond + " done ");
                     }
                 }
                 catch { log.InfoFormat("CurrentState Binding error"); }

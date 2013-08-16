@@ -76,6 +76,10 @@ namespace ArdupilotMega.Log
                             {
                                 MainV2.comPort.MAV.cs.firmware = MainV2.Firmwares.ArduCopter2;
                             }
+                            else if ((line.Contains("PARM, H_SWASH_PLATE")))
+                            {
+                                MainV2.comPort.MAV.cs.firmware = MainV2.Firmwares.ArduHeli;
+                            }
                             else if (line.Contains("PARM, PTCH2SRV_P"))
                             {
                                 MainV2.comPort.MAV.cs.firmware = MainV2.Firmwares.ArduPlane;
@@ -211,43 +215,43 @@ namespace ArdupilotMega.Log
                         offset++;
                         break;
                     case 'h':
-                        line += ", " + BitConverter.ToInt16(message, offset);
+                        line += ", " + BitConverter.ToInt16(message, offset).ToString(System.Globalization.CultureInfo.InvariantCulture);
                         offset += 2;
                         break;
                     case 'H':
-                        line += ", " + BitConverter.ToUInt16(message, offset);
+                        line += ", " + BitConverter.ToUInt16(message, offset).ToString(System.Globalization.CultureInfo.InvariantCulture);
                         offset += 2;
                         break;
                     case 'i':
-                        line += ", " + BitConverter.ToInt32(message, offset);
+                        line += ", " + BitConverter.ToInt32(message, offset).ToString(System.Globalization.CultureInfo.InvariantCulture);
                         offset += 4;
                         break;
                     case 'I':
-                        line += ", " + BitConverter.ToUInt32(message, offset);
+                        line += ", " + BitConverter.ToUInt32(message, offset).ToString(System.Globalization.CultureInfo.InvariantCulture);
                         offset += 4;
                         break;
                     case 'f':
-                        line += ", " + BitConverter.ToSingle(message, offset);
+                        line += ", " + BitConverter.ToSingle(message, offset).ToString(System.Globalization.CultureInfo.InvariantCulture);
                         offset += 4;
                         break;
                     case 'c':
-                        line += ", " + (BitConverter.ToInt16(message, offset) / 100.0).ToString("0.00");
+                        line += ", " + (BitConverter.ToInt16(message, offset) / 100.0).ToString("0.00", System.Globalization.CultureInfo.InvariantCulture);
                         offset += 2;
                         break;
                     case 'C':
-                        line += ", " + (BitConverter.ToUInt16(message, offset) / 100.0).ToString("0.00");
+                        line += ", " + (BitConverter.ToUInt16(message, offset) / 100.0).ToString("0.00", System.Globalization.CultureInfo.InvariantCulture);
                         offset += 2;
                         break;
                     case 'e':
-                        line += ", " + (BitConverter.ToInt32(message, offset) / 100.0).ToString("0.00");
+                        line += ", " + (BitConverter.ToInt32(message, offset) / 100.0).ToString("0.00", System.Globalization.CultureInfo.InvariantCulture);
                         offset += 4;
                         break;
                     case 'E':
-                        line += ", " + (BitConverter.ToUInt32(message, offset) / 100.0).ToString("0.00");
+                        line += ", " + (BitConverter.ToUInt32(message, offset) / 100.0).ToString("0.00", System.Globalization.CultureInfo.InvariantCulture);
                         offset += 4;
                         break;
                     case 'L':
-                        line += ", " + (double)BitConverter.ToInt32(message, offset) / 10000000.0;
+                        line += ", " + ((double)BitConverter.ToInt32(message, offset) / 10000000.0).ToString(System.Globalization.CultureInfo.InvariantCulture);
                         offset += 4;
                         break;
                     case 'n':
@@ -259,7 +263,7 @@ namespace ArdupilotMega.Log
                         offset += 16;
                         break;
                     case 'M':
-                        line += ", " + Common.getModesList()[message[offset]].Value;
+                        line += ", " + Common.getModesList(MainV2.comPort.MAV.cs)[message[offset]].Value;
                         offset++;
                         break;
                     case 'Z':

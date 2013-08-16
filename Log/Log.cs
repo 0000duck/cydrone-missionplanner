@@ -17,7 +17,7 @@ using ICSharpCode.SharpZipLib.Zip;
 using ICSharpCode.SharpZipLib.Checksums;
 using ICSharpCode.SharpZipLib.Core;
 using log4net;
-using ArdupilotMega.Comms;
+using MissionPlanner.Comms;
 
 
 namespace ArdupilotMega.Log
@@ -514,7 +514,7 @@ namespace ArdupilotMega.Log
 
                             try
                             {
-                                dat.datetime = int.Parse(lastline.Split(',', ':')[1]);
+                                dat.datetime = int.Parse(lastline.Split(',', ':')[2]);
                             }
                             catch { }
 

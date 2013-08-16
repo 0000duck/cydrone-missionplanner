@@ -4,7 +4,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading;
 using log4net;
-using ArdupilotMega.Comms;
+using MissionPlanner.Comms;
 
 
 // Written by Michael Oborne
@@ -15,7 +15,7 @@ namespace ArdupilotMega.Arduino
     {
         private static readonly ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         public event ProgressEventHandler Progress;
-
+        
         public new void Open()
         {
             // default dtr status is false

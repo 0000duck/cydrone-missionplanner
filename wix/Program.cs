@@ -98,7 +98,7 @@ namespace wix
             dodirectory(path, 0);
 
 
-            footer();
+            footer(path);
 
             sw.Close();
 
@@ -135,8 +135,8 @@ namespace wix
 
             //st.WriteLine("googlecode_upload.py -s \"Mission Planner installer\" -p ardupilot-mega " + fn + ".msi");
 
-            st.WriteLine(@"c:\cygwin\bin\rsync.exe -Pv --password-file=/cygdrive/c/users/hog/diyrsync.txt " + fn + ".msi michael@firmware.diydrones.com::MissionPlanner/");
             st.WriteLine(@"c:\cygwin\bin\rsync.exe -Pv --password-file=/cygdrive/c/users/hog/diyrsync.txt " + fn + ".zip michael@firmware.diydrones.com::MissionPlanner/");
+            st.WriteLine(@"c:\cygwin\bin\rsync.exe -Pv --password-file=/cygdrive/c/users/hog/diyrsync.txt " + fn + ".msi michael@firmware.diydrones.com::MissionPlanner/");
 
             st.Close();
 
@@ -207,14 +207,15 @@ namespace wix
             sw.WriteLine(data);
         }
 
-        static void footer()
+        static void footer(string path)
         {
+
             string data = @"
                     
                     <Directory Id=""driver"" Name=""Drivers"">
                         <Component Id=""MyDriver"" Guid=""{6AC8226E-A005-437e-A3CD-0FC32D9A346F}"">
-                            <File Id=""apm2inf"" Source=""..\Driver\Arduino MEGA 2560.inf"" />
-                            <File Id=""apm2cat"" Source=""..\Driver\Arduino MEGA 2560.cat"" />
+                            <File Id=""apm2inf"" Source=""..\Driver\arduinomega2560.inf"" />
+                            <File Id=""apm2cat"" Source=""..\Driver\arduinomega2560.cat"" />
                             <File Id=""dpixml"" Source=""..\Driver\dpinst.xml"" />
                             <File Id=""dpix64"" Source=""..\Driver\DPInstx64.exe"" />
                             <File Id=""dpix86"" Source=""..\Driver\DPInstx86.exe"" />

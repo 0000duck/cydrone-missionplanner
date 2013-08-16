@@ -8,12 +8,12 @@ using System.Text;
 using System.Windows.Forms;
 using ArdupilotMega;
 using System.IO.Ports;
-using ArdupilotMega.Comms;
+using MissionPlanner.Comms;
 using ArdupilotMega.Utilities;
 using System.Text.RegularExpressions;
 using log4net;
 using System.Reflection;
-using ArdupilotMega.Controls.BackstageView;
+using ArdupilotMega.Controls;
 
 namespace ArdupilotMega.GCSViews
 {
@@ -34,11 +34,14 @@ namespace ArdupilotMega.GCSViews
             threadrun = false;
 
             InitializeComponent();
+
         }
 
         public void Activate()
         {
             MainV2.instance.MenuConnect.Enabled = false;
+
+            MissionPlanner.Utilities.Tracking.AddPage(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.ToString(), System.Reflection.MethodBase.GetCurrentMethod().Name);
         }
 
         public void Deactivate()

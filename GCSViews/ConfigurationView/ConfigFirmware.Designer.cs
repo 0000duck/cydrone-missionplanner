@@ -75,11 +75,12 @@ namespace ArdupilotMega.GCSViews
             this.pictureBoxOctaQuad = new ArdupilotMega.Controls.ImageLabel();
             this.pictureBoxRover = new ArdupilotMega.Controls.ImageLabel();
             this.label1 = new System.Windows.Forms.Label();
-            this.Custom_firmware_label = new System.Windows.Forms.Label();
+            this.CMB_history = new System.Windows.Forms.ComboBox();
+            this.CMB_history_label = new System.Windows.Forms.Label();
+            this.lbl_Custom_firmware_label = new System.Windows.Forms.Label();
             this.lbl_devfw = new System.Windows.Forms.Label();
             this.lbl_px4io = new System.Windows.Forms.Label();
             this.lbl_dlfw = new System.Windows.Forms.Label();
-            this.CMB_history_label = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxHilimage)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxAPHil)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxACHil)).BeginInit();
@@ -89,52 +90,52 @@ namespace ArdupilotMega.GCSViews
             // pictureBoxAPM
             // 
             this.pictureBoxAPM.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.pictureBoxAPM.Image = null;
+            this.pictureBoxAPM.Image = global::MissionPlanner.Properties.Resources.APM_airframes_001;
             resources.ApplyResources(this.pictureBoxAPM, "pictureBoxAPM");
             this.pictureBoxAPM.Name = "pictureBoxAPM";
             this.pictureBoxAPM.TabStop = false;
             this.pictureBoxAPM.Tag = "";
-            this.pictureBoxAPM.Click += new System.EventHandler(this.pictureBoxAPM_Click);
+            this.pictureBoxAPM.Click += new System.EventHandler(this.pictureBoxFW_Click);
             // 
             // pictureBoxQuad
             // 
             this.pictureBoxQuad.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.pictureBoxQuad.Image = null;
+            this.pictureBoxQuad.Image = global::MissionPlanner.Properties.Resources.FW_icons_2013_logos_04;
             resources.ApplyResources(this.pictureBoxQuad, "pictureBoxQuad");
             this.pictureBoxQuad.Name = "pictureBoxQuad";
             this.pictureBoxQuad.TabStop = false;
             this.pictureBoxQuad.Tag = "";
-            this.pictureBoxQuad.Click += new System.EventHandler(this.pictureBoxQuad_Click);
+            this.pictureBoxQuad.Click += new System.EventHandler(this.pictureBoxFW_Click);
             // 
             // pictureBoxHexa
             // 
             this.pictureBoxHexa.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.pictureBoxHexa.Image = null;
+            this.pictureBoxHexa.Image = global::MissionPlanner.Properties.Resources.FW_icons_2013_logos_10;
             resources.ApplyResources(this.pictureBoxHexa, "pictureBoxHexa");
             this.pictureBoxHexa.Name = "pictureBoxHexa";
             this.pictureBoxHexa.TabStop = false;
             this.pictureBoxHexa.Tag = "";
-            this.pictureBoxHexa.Click += new System.EventHandler(this.pictureBoxHexa_Click);
+            this.pictureBoxHexa.Click += new System.EventHandler(this.pictureBoxFW_Click);
             // 
             // pictureBoxTri
             // 
             this.pictureBoxTri.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.pictureBoxTri.Image = null;
+            this.pictureBoxTri.Image = global::MissionPlanner.Properties.Resources.FW_icons_2013_logos_08;
             resources.ApplyResources(this.pictureBoxTri, "pictureBoxTri");
             this.pictureBoxTri.Name = "pictureBoxTri";
             this.pictureBoxTri.TabStop = false;
             this.pictureBoxTri.Tag = "";
-            this.pictureBoxTri.Click += new System.EventHandler(this.pictureBoxTri_Click);
+            this.pictureBoxTri.Click += new System.EventHandler(this.pictureBoxFW_Click);
             // 
             // pictureBoxY6
             // 
             this.pictureBoxY6.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.pictureBoxY6.Image = null;
+            this.pictureBoxY6.Image = global::MissionPlanner.Properties.Resources.y6;
             resources.ApplyResources(this.pictureBoxY6, "pictureBoxY6");
             this.pictureBoxY6.Name = "pictureBoxY6";
             this.pictureBoxY6.TabStop = false;
             this.pictureBoxY6.Tag = "";
-            this.pictureBoxY6.Click += new System.EventHandler(this.pictureBoxY6_Click);
+            this.pictureBoxY6.Click += new System.EventHandler(this.pictureBoxFW_Click);
             // 
             // lbl_status
             // 
@@ -155,12 +156,12 @@ namespace ArdupilotMega.GCSViews
             // pictureBoxHeli
             // 
             this.pictureBoxHeli.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.pictureBoxHeli.Image = null;
+            this.pictureBoxHeli.Image = global::MissionPlanner.Properties.Resources.APM_airframes_08;
             resources.ApplyResources(this.pictureBoxHeli, "pictureBoxHeli");
             this.pictureBoxHeli.Name = "pictureBoxHeli";
             this.pictureBoxHeli.TabStop = false;
             this.pictureBoxHeli.Tag = "";
-            this.pictureBoxHeli.Click += new System.EventHandler(this.pictureBoxHeli_Click);
+            this.pictureBoxHeli.Click += new System.EventHandler(this.pictureBoxFW_Click);
             // 
             // BUT_setup
             // 
@@ -171,11 +172,10 @@ namespace ArdupilotMega.GCSViews
             this.BUT_setup.Outline = System.Drawing.Color.FromArgb(((int)(((byte)(121)))), ((int)(((byte)(148)))), ((int)(((byte)(41)))));
             this.BUT_setup.TextColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(87)))), ((int)(((byte)(4)))));
             this.BUT_setup.UseVisualStyleBackColor = true;
-            this.BUT_setup.Click += new System.EventHandler(this.BUT_setup_Click);
             // 
             // pictureBoxHilimage
             // 
-            this.pictureBoxHilimage.Image = global::ArdupilotMega.Properties.Resources.hil;
+            this.pictureBoxHilimage.Image = global::MissionPlanner.Properties.Resources.hil;
             resources.ApplyResources(this.pictureBoxHilimage, "pictureBoxHilimage");
             this.pictureBoxHilimage.Name = "pictureBoxHilimage";
             this.pictureBoxHilimage.TabStop = false;
@@ -184,72 +184,87 @@ namespace ArdupilotMega.GCSViews
             // pictureBoxAPHil
             // 
             this.pictureBoxAPHil.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.pictureBoxAPHil.Image = global::ArdupilotMega.Properties.Resources.hilplane;
+            this.pictureBoxAPHil.Image = global::MissionPlanner.Properties.Resources.hilplane;
             resources.ApplyResources(this.pictureBoxAPHil, "pictureBoxAPHil");
             this.pictureBoxAPHil.Name = "pictureBoxAPHil";
             this.pictureBoxAPHil.TabStop = false;
             this.pictureBoxAPHil.Tag = "";
-            this.pictureBoxAPHil.Click += new System.EventHandler(this.pictureBoxAPHil_Click);
+            this.pictureBoxAPHil.Click += new System.EventHandler(this.pictureBoxFW_Click);
             // 
             // pictureBoxACHil
             // 
             this.pictureBoxACHil.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.pictureBoxACHil.Image = global::ArdupilotMega.Properties.Resources.hilquad;
+            this.pictureBoxACHil.Image = global::MissionPlanner.Properties.Resources.hilquad;
             resources.ApplyResources(this.pictureBoxACHil, "pictureBoxACHil");
             this.pictureBoxACHil.Name = "pictureBoxACHil";
             this.pictureBoxACHil.TabStop = false;
             this.pictureBoxACHil.Tag = "";
-            this.pictureBoxACHil.Click += new System.EventHandler(this.pictureBoxACHil_Click);
+            this.pictureBoxACHil.Click += new System.EventHandler(this.pictureBoxFW_Click);
             // 
             // pictureBoxACHHil
             // 
             this.pictureBoxACHHil.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.pictureBoxACHHil.Image = global::ArdupilotMega.Properties.Resources.hilheli;
+            this.pictureBoxACHHil.Image = global::MissionPlanner.Properties.Resources.hilheli;
             resources.ApplyResources(this.pictureBoxACHHil, "pictureBoxACHHil");
             this.pictureBoxACHHil.Name = "pictureBoxACHHil";
             this.pictureBoxACHHil.TabStop = false;
             this.pictureBoxACHHil.Tag = "";
-            this.pictureBoxACHHil.Click += new System.EventHandler(this.pictureBoxACHHil_Click);
+            this.pictureBoxACHHil.Click += new System.EventHandler(this.pictureBoxFW_Click);
             // 
             // pictureBoxOcta
             // 
-            this.pictureBoxOcta.Image = null;
+            this.pictureBoxOcta.Image = global::MissionPlanner.Properties.Resources.FW_icons_2013_logos_12;
             resources.ApplyResources(this.pictureBoxOcta, "pictureBoxOcta");
             this.pictureBoxOcta.Name = "pictureBoxOcta";
             this.pictureBoxOcta.TabStop = false;
             this.pictureBoxOcta.Tag = "";
-            this.pictureBoxOcta.Click += new System.EventHandler(this.pictureBoxOcta_Click);
+            this.pictureBoxOcta.Click += new System.EventHandler(this.pictureBoxFW_Click);
             // 
             // pictureBoxOctaQuad
             // 
-            this.pictureBoxOctaQuad.Image = null;
+            this.pictureBoxOctaQuad.Image = global::MissionPlanner.Properties.Resources.x8;
             resources.ApplyResources(this.pictureBoxOctaQuad, "pictureBoxOctaQuad");
             this.pictureBoxOctaQuad.Name = "pictureBoxOctaQuad";
             this.pictureBoxOctaQuad.TabStop = false;
             this.pictureBoxOctaQuad.Tag = "";
-            this.pictureBoxOctaQuad.Click += new System.EventHandler(this.pictureBoxOctav_Click);
+            this.pictureBoxOctaQuad.Click += new System.EventHandler(this.pictureBoxFW_Click);
             // 
             // pictureBoxRover
             // 
             this.pictureBoxRover.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.pictureBoxRover.Image = null;
+            this.pictureBoxRover.Image = global::MissionPlanner.Properties.Resources.rover_11;
             resources.ApplyResources(this.pictureBoxRover, "pictureBoxRover");
             this.pictureBoxRover.Name = "pictureBoxRover";
             this.pictureBoxRover.TabStop = false;
             this.pictureBoxRover.Tag = "";
-            this.pictureBoxRover.Click += new System.EventHandler(this.pictureBoxRover_Click);
+            this.pictureBoxRover.Click += new System.EventHandler(this.pictureBoxFW_Click);
             // 
             // label1
             // 
             resources.ApplyResources(this.label1, "label1");
             this.label1.Name = "label1";
             // 
-            // Custom_firmware_label
+            // CMB_history
             // 
-            resources.ApplyResources(this.Custom_firmware_label, "Custom_firmware_label");
-            this.Custom_firmware_label.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.Custom_firmware_label.Name = "Custom_firmware_label";
-            this.Custom_firmware_label.Click += new System.EventHandler(this.Custom_firmware_label_Click);
+            this.CMB_history.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.CMB_history.FormattingEnabled = true;
+            resources.ApplyResources(this.CMB_history, "CMB_history");
+            this.CMB_history.Name = "CMB_history";
+            this.CMB_history.SelectedIndexChanged += new System.EventHandler(this.CMB_history_SelectedIndexChanged);
+            // 
+            // CMB_history_label
+            // 
+            resources.ApplyResources(this.CMB_history_label, "CMB_history_label");
+            this.CMB_history_label.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.CMB_history_label.Name = "CMB_history_label";
+            this.CMB_history_label.Click += new System.EventHandler(this.CMB_history_label_Click);
+            // 
+            // lbl_Custom_firmware_label
+            // 
+            resources.ApplyResources(this.lbl_Custom_firmware_label, "lbl_Custom_firmware_label");
+            this.lbl_Custom_firmware_label.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.lbl_Custom_firmware_label.Name = "lbl_Custom_firmware_label";
+            this.lbl_Custom_firmware_label.Click += new System.EventHandler(this.Custom_firmware_label_Click);
             // 
             // lbl_devfw
             // 
@@ -272,13 +287,6 @@ namespace ArdupilotMega.GCSViews
             this.lbl_dlfw.Name = "lbl_dlfw";
             this.lbl_dlfw.Click += new System.EventHandler(this.lbl_dlfw_Click);
             // 
-            // CMB_history_label
-            // 
-            resources.ApplyResources(this.CMB_history_label, "CMB_history_label");
-            this.CMB_history_label.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.CMB_history_label.Name = "CMB_history_label";
-            this.CMB_history_label.Click += new System.EventHandler(this.lbl_dlfw_Click);
-            // 
             // ConfigFirmware
             // 
             resources.ApplyResources(this, "$this");
@@ -286,9 +294,10 @@ namespace ArdupilotMega.GCSViews
             this.Controls.Add(this.lbl_dlfw);
             this.Controls.Add(this.lbl_px4io);
             this.Controls.Add(this.lbl_devfw);
-            this.Controls.Add(this.Custom_firmware_label);
+            this.Controls.Add(this.lbl_Custom_firmware_label);
             this.Controls.Add(this.CMB_history_label);
             this.Controls.Add(this.pictureBoxRover);
+            this.Controls.Add(this.CMB_history);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.BUT_setup);
             this.Controls.Add(this.label2);
@@ -316,12 +325,14 @@ namespace ArdupilotMega.GCSViews
             this.PerformLayout();
 
         }
+
+        private ComboBox CMB_history;
         private Controls.ImageLabel pictureBoxRover;
-        private Label Custom_firmware_label;
+        private Label CMB_history_label;
+        private Label lbl_Custom_firmware_label;
         private Label lbl_devfw;
         private Label lbl_px4io;
         private Label lbl_dlfw;
-        private Label CMB_history_label;
 
     }
 }

@@ -23,11 +23,12 @@ using ArdupilotMega.Controls.BackstageView;
 //using Crom.Controls.Docking;
 using log4net;
 using System.Reflection;
+using MissionPlanner.Controls;
 
 // written by michael oborne
 namespace ArdupilotMega.GCSViews
 {
-    partial class FlightData : MyUserControl, IActivate, IDeactivate
+    public partial class FlightData : MyUserControl, IActivate, IDeactivate
     {
         private static readonly ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
@@ -138,7 +139,7 @@ namespace ArdupilotMega.GCSViews
             myhud = hud1;
             MainHcopy = MainH;
 
-            mymap.Manager.UseMemoryCache = false;
+          //  mymap.Manager.UseMemoryCache = false;
 
             log.Info("Tunning Graph Settings");
             // setup default tuning graph
@@ -172,6 +173,7 @@ namespace ArdupilotMega.GCSViews
 
                     HUD.Custom cust = new HUD.Custom();
                     cust.Header = MainV2.config[item].ToString();
+                    cust.src = MainV2.comPort.MAV.cs;
 
                     addHudUserItem(ref cust, chk);
                 }
@@ -193,7 +195,7 @@ namespace ArdupilotMega.GCSViews
 
             CMB_action.DataSource = list;
 
-            CMB_modes.DataSource = Common.getModesList();
+            CMB_modes.DataSource = Common.getModesList(MainV2.comPort.MAV.cs);
             CMB_modes.ValueMember = "Key";
             CMB_modes.DisplayMember = "Value";
 
@@ -491,9 +493,12 @@ namespace ArdupilotMega.GCSViews
 
             if (MainV2.config.Contains("FlightSplitter"))
             {
-                //  hud1.Width = int.Parse(MainV2.config["FlightSplitter"].ToString());
-                //  MainH.PerformLayout();
                 MainH.SplitterDistance = int.Parse(MainV2.config["FlightSplitter"].ToString());
+            }
+
+            if (MainV2.config.Contains("russian_hud"))
+            {
+                hud1.Russian = bool.Parse(MainV2.config["russian_hud"].ToString());
             }
 
             hud1.doResize();
@@ -503,6 +508,8 @@ namespace ArdupilotMega.GCSViews
         {
             //System.Threading.Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("en-US");
             //System.Threading.Thread.CurrentThread.CurrentCulture = new System.Globalization.CultureInfo("en-US");
+            System.Threading.Thread.CurrentThread.IsBackground = true;
+
             threadrun = 1;
             EndPoint Remote = (EndPoint)(new IPEndPoint(IPAddress.Any, 0));
 
@@ -722,6 +729,9 @@ namespace ArdupilotMega.GCSViews
                         ArdupilotMega.Controls.OpenGLtest.instance.rpy = new OpenTK.Vector3(MainV2.comPort.MAV.cs.roll, MainV2.comPort.MAV.cs.pitch, MainV2.comPort.MAV.cs.yaw);
                         ArdupilotMega.Controls.OpenGLtest.instance.LocationCenter = new PointLatLngAlt(MainV2.comPort.MAV.cs.lat, MainV2.comPort.MAV.cs.lng, MainV2.comPort.MAV.cs.alt, "here");
                     }
+
+                    // update vario info
+                    MissionPlanner.Utilities.Vario.SetValue(MainV2.comPort.MAV.cs.climbrate);
 
                     // udpate tunning tab
                     if (tunning.AddMilliseconds(50) < DateTime.Now && CB_tuning.Checked == true)
@@ -1354,6 +1364,11 @@ namespace ArdupilotMega.GCSViews
         private void gMapControl1_MouseDown(object sender, MouseEventArgs e)
         {
             gotolocation = gMapControl1.FromLocalToLatLng(e.X, e.Y);
+
+            if (Control.ModifierKeys == Keys.Control)
+            {
+                goHereToolStripMenuItem_Click(null, null);
+            }
         }
 
         private void goHereToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1715,7 +1730,7 @@ namespace ArdupilotMega.GCSViews
                 ((Button)sender).Enabled = false;
                 if (MainV2.comPort.MAV.cs.firmware == MainV2.Firmwares.ArduPlane || MainV2.comPort.MAV.cs.firmware == MainV2.Firmwares.Ateryx || MainV2.comPort.MAV.cs.firmware == MainV2.Firmwares.ArduRover)
                     MainV2.comPort.setMode("Manual");
-                if (MainV2.comPort.MAV.cs.firmware == MainV2.Firmwares.ArduCopter2)
+                if (MainV2.comPort.MAV.cs.firmware == MainV2.Firmwares.ArduCopter2 || MainV2.comPort.MAV.cs.firmware == MainV2.Firmwares.ArduHeli)
                     MainV2.comPort.setMode("Stabilize");
 
             }
@@ -1739,7 +1754,7 @@ namespace ArdupilotMega.GCSViews
 
         private void CMB_modes_Click(object sender, EventArgs e)
         {
-            CMB_modes.DataSource = Common.getModesList();
+            CMB_modes.DataSource = Common.getModesList(MainV2.comPort.MAV.cs);
             CMB_modes.ValueMember = "Key";
             CMB_modes.DisplayMember = "Value";
         }
@@ -1825,7 +1840,7 @@ namespace ArdupilotMega.GCSViews
         private void Gspeed_DoubleClick(object sender, EventArgs e)
         {
             string max = "60";
-            if (DialogResult.OK == Common.InputBox("Enter Max", "Enter Max Speed", ref max))
+            if (DialogResult.OK == InputBox.Show("Enter Max", "Enter Max Speed", ref max))
             {
                 Gspeed.MaxValue = float.Parse(max);
                 MainV2.config["GspeedMAX"] = Gspeed.MaxValue.ToString();
@@ -2050,12 +2065,13 @@ namespace ArdupilotMega.GCSViews
             if (((CheckBox)sender).Checked)
             {
                 HUD.Custom cust = new HUD.Custom();
+                cust.src = MainV2.comPort.MAV.cs;
 
                 string prefix = ((CheckBox)sender).Name + ": ";
                 if (MainV2.config["hud1_useritem_" + ((CheckBox)sender).Name] != null)
                     prefix = (string)MainV2.config["hud1_useritem_" + ((CheckBox)sender).Name];
 
-                if (System.Windows.Forms.DialogResult.Cancel == Common.InputBox("Header", "Please enter your item prefix", ref prefix))
+                if (System.Windows.Forms.DialogResult.Cancel == InputBox.Show("Header", "Please enter your item prefix", ref prefix))
                     return;
 
                 MainV2.config["hud1_useritem_" + ((CheckBox)sender).Name] = prefix;
@@ -2261,7 +2277,7 @@ namespace ArdupilotMega.GCSViews
             }
 
             string alt = (100 * MainV2.comPort.MAV.cs.multiplierdist).ToString("0");
-            if (System.Windows.Forms.DialogResult.Cancel == Common.InputBox("Enter Alt", "Enter Target Alt (absolute)", ref alt))
+            if (System.Windows.Forms.DialogResult.Cancel == InputBox.Show("Enter Alt", "Enter Target Alt (absolute)", ref alt))
                 return;
 
             int intalt = (int)(100 * MainV2.comPort.MAV.cs.multiplierdist);
@@ -2397,7 +2413,7 @@ print 'Roll complete'
         {
             string url = MainV2.config["mjpeg_url"] != null ? MainV2.config["mjpeg_url"].ToString() : @"http://127.0.0.1:56781/map.jpg";
 
-            if (DialogResult.OK == Common.InputBox("Mjpeg url", "Enter the url to the mjpeg source url", ref url))
+            if (DialogResult.OK == InputBox.Show("Mjpeg url", "Enter the url to the mjpeg source url", ref url))
             {
 
                 MainV2.config["mjpeg_url"] = url;
@@ -2521,7 +2537,7 @@ print 'Roll complete'
         {
             string alt = "100";
 
-            if (MainV2.comPort.MAV.cs.firmware == MainV2.Firmwares.ArduCopter2)
+            if (MainV2.comPort.MAV.cs.firmware == MainV2.Firmwares.ArduCopter2 || MainV2.comPort.MAV.cs.firmware == MainV2.Firmwares.ArduHeli)
             {
                 alt = (10 * MainV2.comPort.MAV.cs.multiplierdist).ToString("0");
             }
@@ -2533,7 +2549,7 @@ print 'Roll complete'
             if (MainV2.config.ContainsKey("guided_alt"))
                 alt = MainV2.config["guided_alt"].ToString();
 
-            if (DialogResult.Cancel == Common.InputBox("Enter Alt", "Enter Guided Mode Alt", ref alt))
+            if (DialogResult.Cancel == InputBox.Show("Enter Alt", "Enter Guided Mode Alt", ref alt))
                 return;
 
             MainV2.config["guided_alt"] = alt;
@@ -2736,7 +2752,7 @@ print 'Roll complete'
 
         private void BUT_speed1_Click(object sender, EventArgs e)
         {
-            LogPlayBackSpeed = double.Parse(((MyButton)sender).Tag.ToString());
+            LogPlayBackSpeed = double.Parse(((MyButton)sender).Tag.ToString(),System.Globalization.CultureInfo.InvariantCulture);
             lbl_playbackspeed.Text = "x " + LogPlayBackSpeed;            
         }
 
@@ -2836,6 +2852,12 @@ print 'Roll complete'
                 System.Diagnostics.Process.Start(psi);
             }
             catch { }
+        }
+
+        private void russianHudToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            hud1.Russian = !hud1.Russian;
+            MainV2.config["russian_hud"] = hud1.Russian.ToString();
         }
     }
 }

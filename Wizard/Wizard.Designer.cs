@@ -94,7 +94,6 @@ namespace ArdupilotMega.Wizard
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackgroundImage = global::ArdupilotMega.Properties.Resources.planebackground;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.ClientSize = new System.Drawing.Size(799, 562);
             this.Controls.Add(this.progressStep1);
@@ -106,6 +105,7 @@ namespace ArdupilotMega.Wizard
             this.MinimizeBox = false;
             this.Name = "Wizard";
             this.Text = "Wizard";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Wizard_FormClosing);
             this.ResumeLayout(false);
 
         }

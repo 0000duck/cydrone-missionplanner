@@ -21,16 +21,15 @@ using IronPython.Hosting;
 using log4net;
 using ArdupilotMega.Controls;
 using System.Security.Cryptography;
-using ArdupilotMega.Comms;
+using MissionPlanner.Comms;
 using ArdupilotMega.Arduino;
-using System.IO.Ports;
 using Transitions;
 using System.Web.Script.Serialization;
+using MissionPlanner.Controls;
 
 namespace ArdupilotMega
 {
     public partial class MainV2 : Form
-
     {
         private static readonly ILog log =
             LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
@@ -49,10 +48,23 @@ namespace ArdupilotMega
             IntPtr NotificationFilter,
             Int32 Flags);
 
+            static public int SW_SHOWNORMAL = 1;
+            static public int SW_HIDE = 0;
         }
 
-        const int SW_SHOWNORMAL = 1;
-        const int SW_HIDE = 0;
+        public class menuicons
+        {
+            public static Image fd = global::MissionPlanner.Properties.Resources.light_flightdata_icon;
+            public static Image fp = global::MissionPlanner.Properties.Resources.light_flightplan_icon;
+            public static Image initsetup = global::MissionPlanner.Properties.Resources.light_initialsetup_icon;
+            public static Image config_tuning = global::MissionPlanner.Properties.Resources.light_tuningconfig_icon;
+            public static Image sim = global::MissionPlanner.Properties.Resources.light_simulation_icon;
+            public static Image terminal = global::MissionPlanner.Properties.Resources.light_terminal_icon;
+            public static Image help = global::MissionPlanner.Properties.Resources.light_help_icon;
+            public static Image donate = global::MissionPlanner.Properties.Resources.donate;
+            public static Image connect = global::MissionPlanner.Properties.Resources.light_connect_icon;
+            public static Image disconnect = global::MissionPlanner.Properties.Resources.light_disconnect_icon;
+        }
 
         ArdupilotMega.Controls.MainSwitcher MyView;
 
@@ -60,10 +72,14 @@ namespace ArdupilotMega
         /// Active Comport interface
         /// </summary>
         public static MAVLink comPort = new MAVLink();
+
 /// <summary>
 /// passive comports
 /// </summary>
         public static List<MAVLink> Comports = new List<MAVLink>();
+
+        public delegate void WMDeviceChangeEventHandler(WM_DEVICECHANGE_enum cause);
+        public event WMDeviceChangeEventHandler DeviceChanged;
 
         /// <summary>
         /// Comport name
@@ -127,12 +143,12 @@ namespace ArdupilotMega
 
         public static MainSwitcher View;
 
-
         /// <summary>
         /// store the time we first connect
         /// </summary>
         DateTime connecttime = DateTime.Now;
         DateTime nodatawarning = DateTime.Now;
+        DateTime OpenTime = DateTime.Now;
 
         /// <summary>
         /// enum of firmwares
@@ -141,6 +157,7 @@ namespace ArdupilotMega
         {
             ArduPlane,
             ArduCopter2,
+            ArduHeli,
             ArduRover,
             Ateryx
         }
@@ -150,12 +167,9 @@ namespace ArdupilotMega
         /// declared here if i want a "single" instance of the form
         /// ie configuration gets reloaded on every click
         /// </summary>
-        GCSViews.FlightData FlightData;
-        GCSViews.FlightPlanner FlightPlanner;
-        //GCSViews.ConfigurationView.Setup Configuration;
+        public GCSViews.FlightData FlightData;
+        public GCSViews.FlightPlanner FlightPlanner;
         GCSViews.Simulation Simulation;
-        //GCSViews.Firmware Firmware;
-        //GCSViews.Terminal Terminal;
 
         private Form connectionStatsForm;
         private ConnectionStats _connectionStats;
@@ -186,8 +200,6 @@ namespace ArdupilotMega
             instance = this;
 
             InitializeComponent();
-
-            MenuFlightPlanner.Image = new Bitmap(ArdupilotMega.Properties.Resources.flightplanner);
 
             MyView = new MainSwitcher(this);
 
@@ -239,7 +251,7 @@ namespace ArdupilotMega
             //            }
             // ** new
             _connectionControl.CMB_serialport.Items.Add("AUTO");
-            _connectionControl.CMB_serialport.Items.AddRange(ArdupilotMega.Comms.SerialPort.GetPortNames());
+            _connectionControl.CMB_serialport.Items.AddRange(SerialPort.GetPortNames());
             _connectionControl.CMB_serialport.Items.Add("TCP");
             _connectionControl.CMB_serialport.Items.Add("UDP");
             if (_connectionControl.CMB_serialport.Items.Count > 0)
@@ -255,7 +267,13 @@ namespace ArdupilotMega
             // set this before we reset it
             MainV2.config["NUM_tracklength"] = "200";
 
+            // create one here - but override on load
+            MainV2.config["guid"] = Guid.NewGuid().ToString();
+
+            // load config
             xmlconfig(false);
+
+            MissionPlanner.Utilities.Tracking.cid = new Guid(MainV2.config["guid"].ToString());
 
             if (config.ContainsKey("language") && !string.IsNullOrEmpty((string)config["language"]))
                 changelanguage(CultureInfoEx.GetCultureInfo((string)config["language"]));
@@ -268,7 +286,7 @@ namespace ArdupilotMega
                 else
                 {
                     int win = NativeMethods.FindWindow("ConsoleWindowClass", null);
-                    NativeMethods.ShowWindow(win, SW_HIDE); // hide window
+                    NativeMethods.ShowWindow(win, NativeMethods.SW_HIDE); // hide window
                 }
             }
 
@@ -494,7 +512,7 @@ namespace ArdupilotMega
             string oldport = _connectionControl.CMB_serialport.Text;
             _connectionControl.CMB_serialport.Items.Clear();
             _connectionControl.CMB_serialport.Items.Add("AUTO");
-            _connectionControl.CMB_serialport.Items.AddRange(ArdupilotMega.Comms.SerialPort.GetPortNames());
+            _connectionControl.CMB_serialport.Items.AddRange(SerialPort.GetPortNames());
             _connectionControl.CMB_serialport.Items.Add("TCP");
             _connectionControl.CMB_serialport.Items.Add("UDP");
             if (_connectionControl.CMB_serialport.Items.Contains(oldport))
@@ -584,7 +602,16 @@ namespace ArdupilotMega
                 }
                 catch { }
 
-                this.MenuConnect.Image = global::ArdupilotMega.Properties.Resources.connect;
+                // refresh config window if needed
+                if (MyView.current != null)
+                {
+                    if (MyView.current.Name == "HWConfig")
+                        MyView.ShowScreen("HWConfig");
+                    if (MyView.current.Name == "SWConfig")
+                        MyView.ShowScreen("SWConfig");
+                }
+
+                this.MenuConnect.Image = global::MissionPlanner.Properties.Resources.light_connect_icon;
             }
             else
             {
@@ -598,7 +625,7 @@ namespace ArdupilotMega
                         break;
                     case "AUTO":
                     default:
-                        comPort.BaseStream = new Comms.SerialPort();
+                        comPort.BaseStream = new SerialPort();
                         break;
                 }
 
@@ -643,9 +670,6 @@ namespace ArdupilotMega
                     // set port, then options
                     comPort.BaseStream.PortName = _connectionControl.CMB_serialport.Text;
 
-                    comPort.BaseStream.DataBits = 8;
-                    comPort.BaseStream.StopBits = (StopBits)Enum.Parse(typeof(StopBits), "1");
-                    comPort.BaseStream.Parity = (Parity)Enum.Parse(typeof(Parity), "None");
                     try
                     {
                         comPort.BaseStream.BaudRate = int.Parse(_connectionControl.CMB_baudrate.Text);
@@ -723,7 +747,7 @@ namespace ArdupilotMega
                     }
 
                     // set connected icon
-                    this.MenuConnect.Image = global::ArdupilotMega.Properties.Resources.disconnect;
+                    this.MenuConnect.Image = menuicons.disconnect;
                 }
                 catch (Exception ex)
                 {
@@ -753,14 +777,14 @@ namespace ArdupilotMega
                     MainV2.comPort.BaseStream = new UdpSerial();
                 if (comPortName == "AUTO")
                 {
-                    MainV2.comPort.BaseStream = new ArdupilotMega.Comms.SerialPort();
+                    MainV2.comPort.BaseStream = new SerialPort();
                     return;
                 }
             }
             else
             {
                 _connectionControl.CMB_baudrate.Enabled = true;
-                MainV2.comPort.BaseStream = new ArdupilotMega.Comms.SerialPort();
+                MainV2.comPort.BaseStream = new SerialPort();
             }
 
             try
@@ -1040,7 +1064,7 @@ namespace ArdupilotMega
                     {
                         this.BeginInvoke((MethodInvoker)delegate
                         {
-                            this.MenuConnect.Image = global::ArdupilotMega.Properties.Resources.disconnect;
+                            this.MenuConnect.Image = menuicons.disconnect;
                             this.MenuConnect.Image.Tag = "Disconnect";
                             this.MenuConnect.Text = "DISCONNECT";
                             _connectionControl.IsConnected(true);
@@ -1053,7 +1077,7 @@ namespace ArdupilotMega
                     {
                         this.BeginInvoke((MethodInvoker)delegate
                         {
-                            this.MenuConnect.Image = global::ArdupilotMega.Properties.Resources.connect;
+                            this.MenuConnect.Image = menuicons.connect;
                             this.MenuConnect.Image.Tag = "Connect";
                             this.MenuConnect.Text = "CONNECT";
                             _connectionControl.IsConnected(false);
@@ -1073,6 +1097,38 @@ namespace ArdupilotMega
                     }
                 }
                 connectButtonUpdate = DateTime.Now;
+            }
+        }
+
+        private void PluginThread()
+        {
+            Hashtable nextrun = new Hashtable();
+
+            while (true)
+            {
+
+                foreach (var plugin in Plugin.PluginLoader.Plugins)
+                {
+                    if (!nextrun.ContainsKey(plugin))
+                        nextrun[plugin] = DateTime.MinValue;
+
+                    if (DateTime.Now > plugin.NextRun)
+                    {
+                        // get ms till next run
+                        int msnext = (int)(1000 / plugin.loopratehz);
+                        // allow the plug to modify this, if needed
+                        plugin.NextRun = DateTime.Now.AddMilliseconds(msnext);
+
+                        try
+                        {
+                            plugin.Loop();
+                        }
+                        catch (Exception ex) { log.Error(ex); }
+                    }
+                }
+
+                // max rate is 100 hz - prevent masive cpu usage
+                System.Threading.Thread.Sleep(10);
             }
         }
 
@@ -1403,7 +1459,7 @@ namespace ArdupilotMega
 
             MyView.AddScreen(new MainSwitcher.Screen("FlightData", FlightData, true));
             MyView.AddScreen(new MainSwitcher.Screen("FlightPlanner", FlightPlanner, true));
-            MyView.AddScreen(new MainSwitcher.Screen("HWConfig", new GCSViews.HardwareConfig(), false));
+            MyView.AddScreen(new MainSwitcher.Screen("HWConfig", new GCSViews.InitialSetup(), false));
             MyView.AddScreen(new MainSwitcher.Screen("SWConfig", new GCSViews.SoftwareConfig(), false));
             MyView.AddScreen(new MainSwitcher.Screen("Simulation", Simulation, true));
             MyView.AddScreen(new MainSwitcher.Screen("Terminal", new GCSViews.Terminal(), false));
@@ -1447,6 +1503,14 @@ namespace ArdupilotMega
                 Name = "Main Serial reader",
                 Priority = ThreadPriority.AboveNormal
             }.Start();
+
+            // setup main plugin thread
+            new Thread(PluginThread)
+            {
+                IsBackground = true,
+                Name = "plugin runner thread",
+                Priority = ThreadPriority.BelowNormal
+            }.Start();
           
 
             try
@@ -1470,7 +1534,9 @@ namespace ArdupilotMega
             {
                 Plugin.PluginLoader.LoadAll();
             }
-            catch { }
+            catch (Exception ex) { log.Error(ex); }
+
+            MissionPlanner.Utilities.Tracking.AddPage(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.ToString(), System.Reflection.MethodBase.GetCurrentMethod().Name);
         }
 
    
@@ -1640,7 +1706,7 @@ new System.Net.Security.RemoteCertificateValidationCallback((sender, certificate
 
             if (updateFound)
             {
-                var dr = CustomMessageBox.Show("Update Found\n\nDo you wish to update now?", "Update Now", MessageBoxButtons.YesNo);
+                var dr = CustomMessageBox.Show("Update Found\n\nDo you wish to update now? [link;http://firmware.diydrones.com/Tools/MissionPlanner/upgrade/ChangeLog.txt;ChangeLog]", "Update Now", MessageBoxButtons.YesNo);
                 if (dr == DialogResult.Yes)
                 {
                     DoUpdate();
@@ -2263,7 +2329,7 @@ new System.Net.Security.RemoteCertificateValidationCallback((sender, certificate
             if (keyData == (Keys.Control | Keys.J)) // for jani
             {
                 string data = "!!";
-                if (System.Windows.Forms.DialogResult.OK == Common.InputBox("inject", "enter data to be written", ref data))
+                if (System.Windows.Forms.DialogResult.OK == InputBox.Show("inject", "enter data to be written", ref data))
                 {
                     MainV2.comPort.Write(data + "\r");
                 }
@@ -2599,6 +2665,14 @@ new System.Net.Security.RemoteCertificateValidationCallback((sender, certificate
                      }
                      Console.WriteLine("Device Change {0} {1} {2}", m.Msg, (WM_DEVICECHANGE_enum)m.WParam, m.LParam);
                      DeviceChangeEvent(n);
+                     if (DeviceChanged != null)
+                     {
+                         try
+                         {
+                             DeviceChanged((WM_DEVICECHANGE_enum)m.WParam);
+                         }
+                         catch { }
+                     }
                     break;
                 default:
 

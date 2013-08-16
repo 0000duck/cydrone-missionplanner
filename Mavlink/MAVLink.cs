@@ -13,7 +13,7 @@ using System.Threading;
 using ArdupilotMega.Controls;
 using System.ComponentModel;
 using log4net;
-using ArdupilotMega.Comms;
+using MissionPlanner.Comms;
 using ArdupilotMega.Utilities;
 using System.Windows.Forms;
 
@@ -480,7 +480,8 @@ Please check the following
                 giveComport = false;
                 if (string.IsNullOrEmpty(progressWorkerEventArgs.ErrorMessage))
                     progressWorkerEventArgs.ErrorMessage = "Connect Failed";
-                throw e;
+                log.Error(e);
+                throw;
             }
             //frmProgressReporter.Close();
             giveComport = false;
@@ -962,13 +963,11 @@ Please check the following
             mavlink_param_request_read_t req = new mavlink_param_request_read_t();
             req.target_system = sysid;
             req.target_component = compid;
+            req.param_index = index;
             if (index == -1)
             {
                 req.param_id = System.Text.ASCIIEncoding.ASCII.GetBytes(name);
-            }
-            else
-            {
-                req.param_index = index;
+                Array.Resize(ref req.param_id, 16);
             }
 
             generatePacket(MAVLINK_MSG_ID_PARAM_REQUEST_READ, req);
@@ -1002,8 +1001,11 @@ Please check the following
                         mavlink_param_value_t par = buffer.ByteArrayToStructure<mavlink_param_value_t>(6);
 
                         // not the correct id
-                        if (!(par.param_index == index || par.param_id == req.param_id))
+                        if (!(par.param_index == index || ASCIIEncoding.ASCII.GetString(par.param_id) == ASCIIEncoding.ASCII.GetString(req.param_id)))
+                        {
+                            Console.WriteLine("Wrong Answer {0} - {1} - {2}",par.param_index,ASCIIEncoding.ASCII.GetString(par.param_id),par.param_value);
                             continue;
+                        }
 
                         string st = System.Text.ASCIIEncoding.ASCII.GetString(par.param_id);
 
@@ -2068,31 +2070,17 @@ Please check the following
         /// <returns></returns>
         public byte[] readPacket()
         {
-            byte[] buffer = new byte[300];
+            byte[] buffer = new byte[260];
             int count = 0;
             int length = 0;
             int readcount = 0;
             lastbad = new byte[2];
-
-            byte[] headbuffer = new byte[6];
 
             BaseStream.ReadTimeout = 1200; // 1200 ms between chars - the gps detection requires this.
 
             DateTime start = DateTime.Now;
 
             //Console.WriteLine(DateTime.Now.Millisecond + " SR0 " + BaseStream.BytesToRead);
-
-            try
-            {
-                // test fabs idea - http://diydrones.com/profiles/blogs/flying-with-joystick?commentId=705844%3AComment%3A818712&xg_source=msg_com_blogpost
-                if (BaseStream.IsOpen && BaseStream.BytesToWrite > 0)
-                {
-                    // slow down execution. else 100% cpu
-                    Thread.Sleep(1);
-                    return new byte[0];
-                }
-            }
-            catch (Exception ex) { log.Info(ex.ToString()); }
 
             lock (readlock)
             {
@@ -2740,7 +2728,7 @@ Please check the following
 
             try
             {
-                List<KeyValuePair<int,string>> modelist = Common.getModesList();
+                List<KeyValuePair<int, string>> modelist = Common.getModesList(MAV.cs);
 
                 foreach (KeyValuePair<int, string> pair in modelist)
                 {
@@ -2774,6 +2762,9 @@ Please check the following
                             break;
                         case MAVLink.MAV_TYPE.QUADROTOR:
                             MAV.cs.firmware = MainV2.Firmwares.ArduCopter2;
+                            break;
+                        case MAVLink.MAV_TYPE.HELICOPTER:
+                            MAV.cs.firmware = MainV2.Firmwares.ArduHeli;
                             break;
                         case MAVLink.MAV_TYPE.GROUND_ROVER:
                             MAV.cs.firmware = MainV2.Firmwares.ArduRover;

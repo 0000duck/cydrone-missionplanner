@@ -19,7 +19,7 @@ namespace ArdupilotMega.Controls
 
         Control _control;
         Type _source;
-        List<KeyValuePair<string, string>> _source2;
+        List<KeyValuePair<int, string>> _source2;
         string paramname2 = "";
 
         public MavlinkComboBox()
@@ -28,7 +28,7 @@ namespace ArdupilotMega.Controls
             this.DropDownStyle = ComboBoxStyle.DropDownList;
         }
 
-        public void setup(List<KeyValuePair<string, string>> source, string paramname, Hashtable paramlist, string paramname2 = "", Control enabledisable = null)
+        public void setup(List<KeyValuePair<int, string>> source, string paramname, Hashtable paramlist, string paramname2 = "", Control enabledisable = null)
         {
             base.SelectedIndexChanged -= MavlinkComboBox_SelectedIndexChanged;
 
@@ -52,7 +52,7 @@ namespace ArdupilotMega.Controls
 
                 var item = paramlist[paramname];
 
-                this.SelectedValue = paramlist[paramname].ToString();
+                this.SelectedValue = (int)(float)paramlist[paramname];
             }
 
             base.SelectedIndexChanged += new EventHandler(MavlinkComboBox_SelectedIndexChanged);
@@ -98,30 +98,33 @@ namespace ArdupilotMega.Controls
 
             if (_source != null)
             {
-
-                if (!MainV2.comPort.setParam(ParamName, (float)(Int32)Enum.Parse(_source, this.Text)))
+                try
                 {
-                    CustomMessageBox.Show("Set " + ParamName + " Failed!");
-                }
-
-                if (paramname2 != "")
-                {
-                    if (!MainV2.comPort.setParam(paramname2, (float)(Int32)Enum.Parse(_source, this.Text) > 0 ? 1 : 0))
+                    if (!MainV2.comPort.setParam(ParamName, (float)(Int32)Enum.Parse(_source, this.Text)))
                     {
-                        CustomMessageBox.Show("Set " + paramname2 + " Failed!");
+                        CustomMessageBox.Show("Set " + ParamName + " Failed!");
+                    }
+
+                    if (paramname2 != "")
+                    {
+                        if (!MainV2.comPort.setParam(paramname2, (float)(Int32)Enum.Parse(_source, this.Text) > 0 ? 1 : 0))
+                        {
+                            CustomMessageBox.Show("Set " + paramname2 + " Failed!");
+                        }
                     }
                 }
+                catch { CustomMessageBox.Show("Set " + ParamName + " Failed!"); }
             }
             else if (_source2 != null)
             {
-                if (!MainV2.comPort.setParam(ParamName, float.Parse((string)((MavlinkComboBox)sender).SelectedValue)))
+                if (!MainV2.comPort.setParam(ParamName, (float)(int)((MavlinkComboBox)sender).SelectedValue))
                 {
                     CustomMessageBox.Show("Set " + ParamName + " Failed!");
                 }
 
                 if (paramname2 != "")
                 {
-                    if (!MainV2.comPort.setParam(paramname2, float.Parse((string)((MavlinkComboBox)sender).SelectedValue) > 0 ? 1 : 0))
+                    if (!MainV2.comPort.setParam(paramname2, (float)(int)((MavlinkComboBox)sender).SelectedValue > 0 ? 1 : 0))
                     {
                         CustomMessageBox.Show("Set " + paramname2 + " Failed!");
                     }
